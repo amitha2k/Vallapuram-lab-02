@@ -13,8 +13,6 @@ execute:
     warning: false
 ---
 
-Loading libraries
-
 ```{r, load libraries}
 #| output: FALSE
 # Output false ensures your reproducible document does not show all of your code!
