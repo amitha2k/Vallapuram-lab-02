@@ -1,0 +1,37 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "9041 Lab 2",
+    "section": "",
+    "text": "Loading libraries"
+  },
+  {
+    "objectID": "index.html#intro",
+    "href": "index.html#intro",
+    "title": "9041 Lab 2",
+    "section": "Intro",
+    "text": "Intro\nIn this data set there were 63 participants, with varying distributions of education type (Table 1).\n\n\n\n\n\n\nDistribution of Males and Females by Ethnicity\n\n\nGender\nAsian/Asian British\nOther ethnic group\nprefer not to say\nwhite/Caucasian\n\n\n\n\nFemale\n32\n0\n1\n17\n\n\nMale\n6\n1\n0\n6"
+  },
+  {
+    "objectID": "index.html#methods",
+    "href": "index.html#methods",
+    "title": "9041 Lab 2",
+    "section": "Methods",
+    "text": "Methods\n\nParticipants\n\n\nMeasures\nThe Attachment and Social Anxiety data set consists of 3 scales. The first one is the Social Interaction Anxiety Scale (Cronbach’s alpha = 0.9). The second one is the Experiences in Close Relationships Anxiety Subscale (Cronbach’s alpha = 0.94). The third one is the Rosenberg Self-Esteem Scale (Cronbach’s alpha = 0.85).\n\n\nData Analysis Strategy\nHere it is important to note that we have reverse keyed items 5, 9, and 11 in the Social Interaction Anxiety Scale responses, and reverse keyed items 2, 5, 6, 8, and 9 in the Rosenberg Self-Esteem Scale."
+  },
+  {
+    "objectID": "index.html#results",
+    "href": "index.html#results",
+    "title": "9041 Lab 2",
+    "section": "Results",
+    "text": "Results\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDescriptive Statistics for the Attachment and Social Anxiety Scales\n\n\nScales\n\nCentral Tendency\n\n\nVariability\n\n\nReliability Values (Chronbach's alpha)\n\n\n\nmean\nmedian\nsd\nrange\nalphas\n\n\n\n\nSocialInteractionAnxiety\n2.69\n2.60\n0.70\n3.00\n0.90\n\n\nAttachmentAnxiety\n3.40\n3.11\n1.62\n5.89\n0.94\n\n\nRosenbergSelfEsteem\n2.23\n2.20\n0.51\n2.20\n0.85\n\n\n\n\n\nIn this data set, the 3 factors refer to the 3 composites that measure attachment and social anxiety. Participants had a mean score on social interaction anxiety of 2.69, on experiences in close relationships anxiety of 3.4, and on self-esteem of 2.23.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nDescriptive Statistics for the Attachment and Social Anxiety Scales (Age groups 1 and 2)\n\n\nScales\n\nCentral Tendency\n\n\nVariability\n\n\nReliability Values (Chronbach's alpha)\n\n\n\nmean\nmedian\nsd\nrange\nalphas\n\n\n\n\nSocialInteractionAnxiety\n2.72\n2.62\n0.72\n3.00\n0.90\n\n\nAttachmentAnxiety\n3.50\n3.11\n1.62\n5.89\n0.94\n\n\nRosenbergSelfEsteem\n2.26\n2.20\n0.51\n2.20\n0.85\n\n\n\n\n\nHere, we look at the attachment and social anxiety of participants over age 18 and below age 34.Participants had a mean score on social interaction anxiety of 2.72, on experiences in close relationships anxiety of 3.5, and on self-esteem of 2.26."
+  },
+  {
+    "objectID": "index.html#discussion",
+    "href": "index.html#discussion",
+    "title": "9041 Lab 2",
+    "section": "Discussion",
+    "text": "Discussion"
+  }
+]

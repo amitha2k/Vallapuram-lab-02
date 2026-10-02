@@ -1,0 +1,240 @@
+---
+title: "9041 Lab 2"
+author: Amitha Vallapuram
+date: Oct 1 2026
+format: 
+    html:
+      toc: true
+      code-fold: true
+      code-summary: "Show code"
+      df-print: paged
+execute:
+    echo: false
+    warning: false
+---
+
+Loading libraries
+
+```{r, load libraries}
+#| output: FALSE
+# Output false ensures your reproducible document does not show all of your code!
+
+# Remember to install packages you do not already have
+
+library(tidyverse)
+library(readxl)
+library(psych)
+library(gt)
+library(janitor)
+```
+
+```{r}
+#| output: FALSE
+
+# Load data
+data<-read_excel("./Attachment_Anxiety_Data.xlsx")
+
+
+# Inspect data for the big five dataset
+head(data)
+```
+
+```{r, clean data}
+#| output: FALSE
+
+# Use mutate to rename variables in a meaningful way - I did Gender and Ethnicity. 
+# Mutate to convert survey response values to integers - I converted all numerical variables to integer format (this includes the demographic numerical variables)
+
+AA.data.clean <- data |>
+    mutate(Gender = case_when(Gender==1 ~ "Male", Gender==2 ~"Female", TRUE ~ "NA")) |> 
+    mutate(Ethnicity = case_when(Ethnicity==1 ~ "white/Caucasian", Ethnicity==2 ~ "Asian/Asian British",Ethnicity==5 ~ "Other ethnic group", Ethnicity==6 ~ "prefer not to say", TRUE ~ "NA")) |> 
+    select(URN:SEst_10) |>
+    mutate(across(SA_1:SEst_10, as.integer))
+```
+
+```{r, score items}
+#| output: FALSE
+
+# Answer key: which items belong to each subscale.
+# "-" marks reverse-coded items, which get flipped so higher scores always mean more of the trait.
+
+keys <- list(SocialInteractionAnxiety=c("SA_1", "SA_2", "SA_3", "SA_4", "-SA_5", "SA_6", "SA_7", "SA_8", "-SA_9", "SA_10", "-SA_11", "SA_12", "SA_13", "SA_14", "SA_15", "SA_16", "SA_17", "SA_18", "SA_19", "SA_20"),
+                AttachmentAnxiety=c("AA_1", "AA_2", "AA_3", "AA_4", "AA_5", "AA_6", "AA_7", "AA_8", "AA_9"),
+                RosenbergSelfEsteem=c("SEst_1", "-SEst_2", "SEst_3", "SEst_4", "-SEst_5", "-SEst_6", "SEst_7", "-SEst_8", "-SEst_9", "SEst_10"))
+
+
+# Average items per person, and compute Cronbach's alpha.
+# The Lab instructions say social interaction anxiety go from 0 to 4 but I see in the excel sheet that they are going from
+# 1-5 so I have set that as the min and max values.
+scores_SA<-scoreItems(keys["SocialInteractionAnxiety"], AA.data.clean, totals = F, min=1, max=5)
+scores_AA<-scoreItems(keys["AttachmentAnxiety"], AA.data.clean, totals = F, min=1, max=7)
+scores_SEst<-scoreItems(keys["RosenbergSelfEsteem"], AA.data.clean, totals = F, min=1, max=4)
+
+# Turn this into a dataframe!
+scores_SA.df<-as.data.frame(scores_SA$scores)
+scores_AA.df<-as.data.frame(scores_AA$scores)
+scores_SEst.df<-as.data.frame(scores_SEst$scores)
+
+allscores.df <- cbind(scores_SA.df, scores_AA.df, scores_SEst.df)
+```
+
+```{r, combine data frames}
+#| output: FALSE
+
+# Combine the original data set with the new scores dataframe
+AA.data.clean<-cbind(AA.data.clean, allscores.df)
+
+# Inspect new data set
+head(AA.data.clean)
+```
+
+```{r, reduced data}
+#| output: FALSE
+
+# Select only for the columns which you want to appear in your final data table
+AA.final<- AA.data.clean |>
+    select("URN", "Consent", "Gender", "Age group", "Ethnicity", "SocialInteractionAnxiety", "AttachmentAnxiety", "RosenbergSelfEsteem") |>
+    mutate_if(is.numeric, round, 2)
+
+AA.final
+```
+
+```{r, reproducible table}
+
+# Create a demographics table of education by gender
+demographictable <- AA.final |>
+  tabyl(Gender, Ethnicity)
+
+# Create your reproducible gt table
+gttable.1 <- demographictable |>
+  gt() |>
+  tab_header(
+    title = md("*Distribution of Males and Females by Ethnicity*")
+  )
+
+```
+
+```{r, reproducible table for big five scores}
+#| output: FALSE
+
+# Summary statistics for certain columns
+summary <- describe(select(AA.final, SocialInteractionAnxiety:RosenbergSelfEsteem))
+summary
+
+# Label sample size for later in your reproducible document using describe
+n <- (describe(AA.final))[1,2]
+
+# Name an object of Scales so this can appear in your table
+Scales <- c("SocialInteractionAnxiety", "AttachmentAnxiety",  "RosenbergSelfEsteem")
+
+# Create a column called Subscales in your summary table
+summary$Scales<- Scales
+
+#Combine the three Cronbach's alpha values 
+alphas <- round(c(
+  scores_SA$alpha,
+  scores_AA$alpha,
+  scores_SEst$alpha
+), 2)
+
+# Select for only the columns which you want to appear in your final table
+summary <- summary |>
+    select(Scales, mean, median, sd, range) |>
+       mutate_if(is.numeric, round, 2)
+
+# Combine summary information with alpha values
+final.reptable <- cbind(summary, alphas)
+
+# Create a reproducible table
+gttable.2<- gt(final.reptable) |>
+    tab_header(
+        title = md("*Descriptive Statistics for the Attachment and Social Anxiety Scales*")) |>
+    tab_stubhead(label= "Composites")|>
+    tab_spanner(
+        label="Central Tendency",
+        columns = c(mean, median)
+    )|>
+        tab_spanner(
+        label="Variability",
+        columns = c(sd, range)
+        )|>
+            tab_spanner(
+        label="Reliability Values (Chronbach's alpha)",
+        columns = alphas
+            ) 
+
+```
+
+```{r, filtered dataset}
+#| output: FALSE
+
+# Use filter
+
+AA.filtered <- AA.final |>
+    filter(`Age group` == "1" | `Age group` == "2")
+
+# Checking that age restriction worked
+table(AA.filtered$`Age group`)
+```
+```{r, filtered score table}
+#| output: FALSE
+
+summary.filtered <- describe(select(AA.filtered, SocialInteractionAnxiety:RosenbergSelfEsteem))
+n.filtered <- nrow(AA.filtered)
+summary.filtered$Scales <- Scales
+
+summary.filtered <- summary.filtered |>
+    select(Scales, mean, median, sd, range) |>
+    mutate_if(is.numeric, round, 2)
+
+filtered.reptable <- cbind(summary.filtered, alphas)
+
+# Create a reproducible table
+gttable.3<- gt(filtered.reptable) |>
+    tab_header(
+        title = md("*Descriptive Statistics for the Attachment and Social Anxiety Scales (Age groups 1 and 2)*")) |>
+    tab_stubhead(label= "Composites")|>
+    tab_spanner(
+        label="Central Tendency",
+        columns = c(mean, median)
+    )|>
+        tab_spanner(
+        label="Variability",
+        columns = c(sd, range)
+        )|>
+            tab_spanner(
+        label="Reliability Values (Chronbach's alpha)",
+        columns = alphas
+            ) 
+
+```
+## Intro
+
+In this data set there were `{r} n` participants, with varying distributions of education type (Table 1).
+
+`{r} gttable.1`
+
+## Methods
+
+### Participants
+
+
+### Measures
+
+The Attachment and Social Anxiety data set consists of 3 scales. The first one is the Social Interaction Anxiety Scale (Cronbach's alpha = `{r} alphas[1]`). The second one is the Experiences in Close Relationships Anxiety Subscale (Cronbach's alpha = `{r} alphas[2]`). The third one is the Rosenberg Self-Esteem Scale (Cronbach's alpha = `{r} alphas[3]`).
+
+
+### Data Analysis Strategy
+Here it is important to note that we have reverse keyed items 5, 9, and 11 in the Social
+Interaction Anxiety Scale responses, and reverse keyed items 2, 5, 6, 8, and 9 in the Rosenberg
+Self-Esteem Scale.
+
+## Results
+`{r} gttable.2`
+In this data set, the 3 factors refer to the 3 composites that measure attachment and social anxiety. Participants had a mean score on social interaction anxiety of `{r} final.reptable[1,2]`, on experiences in close relationships anxiety of `{r} final.reptable[2,2]`, and on self-esteem of `{r} final.reptable[3,2]`.
+
+
+`{r} gttable.3`
+Here, we look at the attachment and social anxiety of participants over age 18 and below age 34.Participants had a mean score on social interaction anxiety of `{r} filtered.reptable[1,2]`, on experiences in close relationships anxiety of `{r} filtered.reptable[2,2]`, and on self-esteem of `{r} filtered.reptable[3,2]`.
+
+## Discussion
